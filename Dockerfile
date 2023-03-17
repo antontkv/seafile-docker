@@ -31,6 +31,7 @@ RUN chmod +x /tini
 # Get Seafile files
 RUN mkdir -p /seafile/data && mkdir -p /seafile/server
 COPY --from=download /seafile-server /seafile/server/seafile-server
+COPY setup_script.py /seafile
 
 # Clear requirements.txt by resolving package versions
 RUN set -eux; \
@@ -49,3 +50,4 @@ USER 33
 WORKDIR /seafile
 EXPOSE 8000 8082 8080
 ENTRYPOINT ["/tini", "-g", "--"]
+CMD ["python3", "-u", "/seafile/setup_script.py"]
