@@ -49,5 +49,6 @@ RUN chown -R 33:33 /seafile
 USER 33
 WORKDIR /seafile
 EXPOSE 8000 8082 8080
+VOLUME /seafile/data
 ENTRYPOINT ["/tini", "-g", "--"]
 CMD ["python3", "-u", "/seafile/setup_script.py"]
