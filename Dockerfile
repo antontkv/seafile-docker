@@ -5,27 +5,37 @@ ADD https://download.seadrive.org/seafile-server_${SEAFILE_VERSION}_x86-64.tar.g
 RUN tar -zxvf seafile-server_${SEAFILE_VERSION}_x86-64.tar.gz && \
     mv seafile-server-${SEAFILE_VERSION} seafile-server
 
-FROM python:3.11.2-slim-bullseye as runtime
+FROM ubuntu:focal as runtime
 ARG SEAFILE_VERSION
 ENV SEAFILE_VERSION=${SEAFILE_VERSION}
+ENV LANG C.UTF-8
+ENV LC_ALL C.UTF-8
+ENV DEBIAN_FRONTEND=noninteractive
+
+# Install dependencies
 RUN set -eux; \
     apt-get update; \
     apt-get upgrade -y; \
     apt-get install -y --no-install-recommends \
+        tzdata \
+        python3 python3-setuptools python3-pip \
         pwgen \
         sqlite3 \
-        tini \
     ; \
     rm -rf /var/lib/apt/lists/*
 
+# Install tini for init
+ADD https://github.com/krallin/tini/releases/download/v0.19.0/tini /tini
+RUN chmod +x /tini
+
+# Get Seafile files
 RUN mkdir -p /seafile/data && mkdir -p /seafile/server
 COPY --from=download /seafile-server /seafile/server/seafile-server
-RUN ls -la /seafile/server/seafile-server
-RUN chown -R 33:33 /seafile
 
 RUN pip install --no-cache-dir -r /seafile/server/seafile-server/seahub/requirements.txt
 
+RUN chown -R 33:33 /seafile
 USER 33
 WORKDIR /seafile
 EXPOSE 8000 8082 8080
-ENTRYPOINT ["/usr/bin/tini", "-g", "--"]
+ENTRYPOINT ["/tini", "-g", "--"]
