@@ -32,7 +32,17 @@ RUN chmod +x /tini
 RUN mkdir -p /seafile/data && mkdir -p /seafile/server
 COPY --from=download /seafile-server /seafile/server/seafile-server
 
-RUN pip install --no-cache-dir -r /seafile/server/seafile-server/seahub/requirements.txt
+# Clear requirements.txt by resolving package versions
+RUN set -eux; \
+    pip3 install --no-cache-dir pip-tools; \
+    cd /seafile/server/seafile-server/seahub; \
+    mv requirements.txt requirements.in; \
+    pip-compile --resolver=backtracking; \
+    pip3 uninstall -y pip-tools; \
+    rm -rf /root/.cache/pip
+
+# Installing python dependencies
+RUN set -eux; pip3 install --no-cache-dir -r /seafile/server/seafile-server/seahub/requirements.txt
 
 RUN chown -R 33:33 /seafile
 USER 33
