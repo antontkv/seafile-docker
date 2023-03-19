@@ -1,0 +1,23 @@
+version: "3.8"
+
+volumes:
+  seafile:
+    driver: local
+    name: seafile
+
+services:
+  seafile:
+    image: seafile:7.1.3
+    container_name: seafile
+    environment:
+      TZ:
+      SEAFILE_ADMIN_EMAIL:
+      SEAFILE_ADMIN_PASSWORD:
+      ENABLE_WEBDAV:
+      SEAFILE_URL:
+    ports:
+      - "127.0.0.1:8000:8000" # Seahub frontend
+      - "127.0.0.1:8082:8082" # Safile file server
+      - "127.0.0.1:8080:8080" # WebDAV
+    volumes:
+      - seafile:/seafile/data
