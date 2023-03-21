@@ -42,8 +42,22 @@ RUN set -eux; \
     pip3 uninstall -y pip-tools; \
     rm -rf /root/.cache/pip
 
-# Installing python dependencies
-RUN set -eux; pip3 install --no-cache-dir -r /seafile/server/seafile-server/seahub/requirements.txt
+RUN set -eux; \
+    # Installing Seahub dependencies
+    pip3 install --no-cache-dir -r /seafile/server/seafile-server/seahub/requirements.txt; \
+    # Installing Seafdav dependencies
+    pip3 install --no-cache-dir \
+        markupsafe==2.0.1 \
+        defusedxml~=0.5 \
+        Jinja2~=2.10 \
+        jsmin~=2.2 \
+        python-pam~=1.8 \
+        PyYAML~=5.1 \
+        six~=1.12 \
+        lxml==4.4.1 \
+        sqlalchemy==1.3.7
+
+ENV PYTHONPATH=/seafile/server/seafile-server/seahub/thirdpart:/seafile/server/seafile-server/seafile/lib64/python3.6/site-packages
 
 RUN chown -R 33:33 /seafile
 USER 33

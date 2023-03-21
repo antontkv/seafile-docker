@@ -26,11 +26,9 @@ share_name = /seafdav
 """
 WEBDAV_ENABLE_STR = """\
 enabled = true
-fastcgi = true
 """
 WEBDAV_DISABLE_STR = """\
 enabled = false
-fastcgi = false
 """
 
 def wait_forever():
