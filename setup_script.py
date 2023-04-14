@@ -1,7 +1,7 @@
-import subprocess
+import json
 import os
 import re
-import json
+import subprocess
 import time
 
 SERVER_PATH = "/seafile/server/seafile-server"
@@ -31,9 +31,11 @@ WEBDAV_DISABLE_STR = """\
 enabled = false
 """
 
+
 def wait_forever():
     while True:
         time.sleep(1)
+
 
 def check_env(env: str, default: str):
     if os.getenv(env) is not None:
@@ -41,9 +43,11 @@ def check_env(env: str, default: str):
     else:
         return default
 
+
 def write_version_file():
     with open(SF_VER, "w") as f:
         f.write(os.getenv("SEAFILE_VERSION"))
+
 
 def replace_in_file(filename: str, re_to_find: str, replace_with_this: str):
     with open(filename, "r") as f:
@@ -52,8 +56,10 @@ def replace_in_file(filename: str, re_to_find: str, replace_with_this: str):
     with open(filename, "w") as f:
         f.write(new_file_content)
 
+
 def is_https(server_url: str) -> bool:
     return server_url.startswith("https://")
+
 
 def port_validation(port: str) -> int:
     try:
@@ -63,6 +69,7 @@ def port_validation(port: str) -> int:
     if 1 > port > 65536:
         raise ValueError(f"Port {port} in not in range of valid ports 1-65536")
     return port
+
 
 def main():
     # Setting up URL info
@@ -80,13 +87,15 @@ def main():
 
     # Running install script, if there is no data and running for the first time.
     if not os.path.exists(SF_VER):
-        subprocess.run([SEAFILE_INSTALL_SCRIPT, "auto", "-n", "seafile", "-i", server_hostname, "-p", "8082"], check=True)
+        subprocess.run(
+            [SEAFILE_INSTALL_SCRIPT, "auto", "-n", "seafile", "-i", server_hostname, "-p", "8082"], check=True
+        )
 
-        replace_in_file(GUNICORN_CONFIG, r"127\.0\.0\.1", "0.0.0.0")
+        replace_in_file(GUNICORN_CONFIG, r"127\.0\.0\.1", "0.0.0.0")  # noqa
 
         admin_txt = {
-            'email': check_env("SEAFILE_ADMIN_EMAIL", "me@example.com"),
-            'password': check_env('SEAFILE_ADMIN_PASSWORD', 'asecret'),
+            "email": check_env("SEAFILE_ADMIN_EMAIL", "me@example.com"),
+            "password": check_env("SEAFILE_ADMIN_PASSWORD", "asecret"),
         }
         with open(PWD_FILE, "w") as f:
             json.dump(admin_txt, f)
@@ -149,7 +158,7 @@ def main():
     if not os.path.exists(SEAFILE_LATEST):
         subprocess.run(["ln", "-s", SEAFILE_LATEST, SERVER_PATH], check=True)
     if not os.path.islink(AVATARS_DIR):
-        print('The container was recreated, running minor-upgrade.sh to fix the media symlinks')
+        print("The container was recreated, running minor-upgrade.sh to fix the media symlinks")
         minor_upgrade_script = os.path.join(SERVER_PATH, "upgrade/minor-upgrade.sh")
         replace_in_file(minor_upgrade_script, r"read dummy", "")
         subprocess.run([minor_upgrade_script], check=True)
@@ -162,6 +171,7 @@ def main():
     finally:
         if os.path.exists(PWD_FILE):
             os.remove(PWD_FILE)
+
 
 if __name__ == "__main__":
     main()

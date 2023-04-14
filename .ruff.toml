@@ -1,0 +1,6 @@
+select = ["E", "F", "I", "S"]
+line-length = 120
+target-version = "py311"
+
+[per-file-ignores]
+"tests/test*.py" = ["S101"]
