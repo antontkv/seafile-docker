@@ -35,7 +35,11 @@ build: ## Build docker container
 
 .PHONY: test
 test: ## Run tests
-	@.venv/bin/python -m pytest -x
+	@.venv/bin/python -m pytest
+
+.PHONY: test.last_failed
+test.last_failed: ## Run last failed tests
+	@.venv/bin/python -m pytest --lf
 
 .PHONY: up
 up: ## Start the container
