@@ -106,6 +106,12 @@ class SeafileAPI:
         self.create_test_file()
 
 
+def get_test_file_contents_via_webdav() -> str:
+    return requests.get(
+        "http://localhost:8080/seafdav/test_lib/hello.txt", auth=("me@example.com", "asecret"), timeout=5
+    ).text
+
+
 def wait_for_response_on_port(port: int, path: str = "/", timeout: int = 30) -> int:
     for _ in range(timeout):
         try:
