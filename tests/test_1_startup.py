@@ -15,12 +15,9 @@ def test_cold_startup_seafdav() -> None:
     assert wait_for_response_on_port(8080) == 401
 
 
-def test_with_disabled_seafdav(seafile_container: SeafileContainerSetup) -> None:
+def test_disabling_seafdav(seafile_container: SeafileContainerSetup) -> None:
     seafile_container.restart_with_disabled_seafdav()
     with pytest.raises(TimeoutError):
         wait_for_response_on_port(8080)
-
-
-def test_with_reenabled_seafdav(seafile_container: SeafileContainerSetup) -> None:
     seafile_container.restart_with_enabled_seafdav()
     assert wait_for_response_on_port(8080) == 401

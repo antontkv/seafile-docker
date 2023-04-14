@@ -2,7 +2,6 @@ from .utils import SeafileAPI, SeafileContainerSetup, wait_for_response_on_port
 
 
 def test_data_creation(seafile_api: SeafileAPI) -> None:
-    seafile_api.create_test_data()
     assert seafile_api.get_test_file_contents() == "Hello Seafile"
 
 
