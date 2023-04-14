@@ -1,0 +1,25 @@
+#!/bin/bash
+
+set -e
+set -o pipefail
+set -u
+
+cd $(dirname "$0")
+source ./utils.sh --source-only
+
+need_sudo_or_not
+
+if $SUDO_OR_NOT docker ps | grep -c "\sseafile$" > /dev/null; then
+  CONTAINER_STATUS="$(tput setaf 2)RUNNING$(tput sgr0)"
+else
+  CONTAINER_STATUS="$(tput setaf 1)STOPPED$(tput sgr0)"
+fi
+
+if $SUDO_OR_NOT docker volume ls | grep -c "\sseafile$" > /dev/null; then
+  VOLUME_STATUS="$(tput setaf 2)EXIST$(tput sgr0)"
+else
+  VOLUME_STATUS="$(tput setaf 1)DELETED$(tput sgr0)"
+fi
+
+echo "Container:    $CONTAINER_STATUS"
+echo "Volume:       $VOLUME_STATUS"

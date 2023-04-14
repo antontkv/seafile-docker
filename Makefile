@@ -36,3 +36,19 @@ build: ## Build docker container
 .PHONY: test
 test: ## Run tests
 	@.venv/bin/python -m pytest -x
+
+.PHONY: up
+up: ## Start the container
+	@docker compose up -d
+
+.PHONY: down
+down: ## Stop the container
+	@docker compose down
+
+.PHONY: down.clean
+down.clean: down ## Stop the container and remove data volume
+	@docker volume rm seafile
+
+.PHONY: status
+status: ## Show container and volume status
+	@scripts/status
