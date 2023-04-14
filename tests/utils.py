@@ -16,6 +16,15 @@ class SeafileContainerSetup:
             ports={8000: ("127.0.0.1", 8000), 8082: ("127.0.0.1", 8082), 8080: ("127.0.0.1", 8080)},
             environment={"ENABLE_WEBDAV": "True"},
         )
+
+        # Removing left over container, if they left after previous runs
+        try:
+            self._docker_client.containers.get("test-seafile").stop()
+            self._docker_client.containers.get("test-seafile").remove()
+            self._docker_client.volumes.get("test-seafile").remove()
+        except docker.errors.NotFound:
+            pass
+
         self.volume = self._docker_client.volumes.create(name="test-seafile", driver="local")
         self.container = self._docker_client.containers.run(**self._container_args)
 
