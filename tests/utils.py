@@ -1,9 +1,9 @@
-import requests
+from copy import deepcopy
 from time import sleep
 
 import docker
-import pytest
-from copy import deepcopy
+import requests
+
 
 class SeafileContainerSetup:
     def __init__(self) -> None:
@@ -14,7 +14,7 @@ class SeafileContainerSetup:
             detach=True,
             volumes={"test-seafile": {"bind": "/seafile/data", "mode": "rw"}},
             ports={8000: ("127.0.0.1", 8000), 8082: ("127.0.0.1", 8082), 8080: ("127.0.0.1", 8080)},
-            environment={"ENABLE_WEBDAV": "True"}
+            environment={"ENABLE_WEBDAV": "True"},
         )
         self.volume = self._docker_client.volumes.create(name="test-seafile", driver="local")
         self.container = self._docker_client.containers.run(**self._container_args)
@@ -40,16 +40,10 @@ class SeafileContainerSetup:
         self.container = self._docker_client.containers.run(**self._container_args)
 
 
-@pytest.fixture(scope='session', autouse=True)
-def seafile_container() -> SeafileContainerSetup:
-    container_setup = SeafileContainerSetup()
-    yield container_setup
-    container_setup.teardown()
-
 def wait_for_response_on_port(port: int, path: str = "/", timeout: int = 30) -> int:
     for _ in range(timeout):
         try:
-            r = requests.get(f'http://localhost:{port}{path}', timeout=1)
+            r = requests.get(f"http://localhost:{port}{path}", timeout=1)
             return r.status_code
         except (requests.exceptions.ConnectionError, requests.exceptions.ReadTimeout):
             sleep(1)
