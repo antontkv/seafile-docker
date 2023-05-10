@@ -1,0 +1,14 @@
+{
+    "[python]": {
+        "editor.formatOnSave": true,
+        "editor.codeActionsOnSave": {
+            "source.fixAll": true,
+            "source.organizeImports": true
+        }
+    },
+    "python.formatting.provider": "black",
+    "python.formatting.blackArgs": ["--line-length", "120"],
+    "python.defaultInterpreterPath": ".venv/bin/python",
+    "python.analysis.typeCheckingMode": "off",
+    "files.trimTrailingWhitespace": true
+}
