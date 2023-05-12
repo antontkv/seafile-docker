@@ -1,0 +1,20 @@
+#!/usr/bin/bash
+
+function start() {
+    /seafile/server/seafile-server/seafile.sh stop
+    sleep 5
+    /seafile/server/seafile-server/seaf-gc.sh
+}
+
+function end() {
+    /seafile/server/seafile-server/seafile.sh start
+}
+
+case $1 in
+    "start" )
+        start;
+        ;;
+    "end" )
+        end;
+        ;;
+esac

@@ -32,6 +32,7 @@ RUN chmod +x /tini
 RUN mkdir -p /seafile/data && mkdir -p /seafile/server
 COPY --from=download /seafile-server /seafile/server/seafile-server
 COPY container_scripts/setup_script.py /seafile
+COPY container_scripts/backup /usr/sbin
 
 # Clear requirements.txt by resolving package versions
 RUN set -eux; \
