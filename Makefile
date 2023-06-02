@@ -56,3 +56,15 @@ down.clean: down ## Stop the container and remove data volume
 .PHONY: status
 status: ## Show container and volume status
 	@scripts/status
+
+.PHONY: backup
+backup: ## Create a backup archive
+	@docker exec -it seafile backup start
+	sudo tar -czvf backup.tar -C /var/lib/docker/volumes/seafile/_data .
+	@docker exec -it seafile backup end
+
+.PHONY: restore
+restore: down.clean ## Restore a backup archive
+	@docker compose create
+	sudo tar --same-owner -xvf backup.tar -C /var/lib/docker/volumes/seafile/_data
+	@docker compose up -d
