@@ -1,13 +1,14 @@
 {
     "[python]": {
+        "editor.defaultFormatter": "ms-python.black-formatter",
         "editor.formatOnSave": true,
         "editor.codeActionsOnSave": {
             "source.fixAll": true,
             "source.organizeImports": true
         }
     },
-    "python.formatting.provider": "black",
-    "python.formatting.blackArgs": ["--line-length", "120"],
+    "ruff.enable": true,
+    "black-formatter.args": ["--line-length", "120"],
     "python.defaultInterpreterPath": ".venv/bin/python",
     "python.analysis.typeCheckingMode": "off",
     "files.trimTrailingWhitespace": true

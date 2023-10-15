@@ -24,6 +24,15 @@ requirements: ## Resolve dependencies from .in files and update environment
 	@.venv/bin/pip-compile --resolver=backtracking requirements-dev.in
 	@.venv/bin/pip-sync requirements-dev.txt
 
+.PHONY: update.requirements
+update.requirements: ## Update requirements
+	@.venv/bin/pip-compile --resolver=backtracking -U requirements-dev.in
+	@.venv/bin/pip-sync requirements-dev.txt
+
+.PHONY: update.precommit
+update.precommit: ## Update pre-commit repos
+	@.venv/bin/pre-commit autoupdate
+
 .PHONY: lint
 lint: ## Launch black and ruff
 	-@.venv/bin/black -l120 .
