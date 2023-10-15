@@ -32,28 +32,19 @@ RUN chmod +x /tini
 RUN mkdir -p /seafile/data && mkdir -p /seafile/server
 COPY --from=download /seafile-server /seafile/server/seafile-server
 
-# Clear requirements.txt by resolving package versions
-RUN set -eux; \
-    pip3 install --no-cache-dir pip-tools; \
-    cd /seafile/server/seafile-server/seahub; \
-    mv requirements.txt requirements.in; \
-    pip-compile --resolver=backtracking; \
-    pip3 uninstall -y pip-tools; \
-    rm -rf /root/.cache/pip
-
 RUN set -eux; \
     # Installing Seahub dependencies
-    pip3 install --no-cache-dir -r /seafile/server/seafile-server/seahub/requirements.txt; \
+    pip3 install --no-cache-dir --no-dependencies \
+        captcha==0.3 \
+        django-simple-captcha==0.5.12 \
+        django-ranged-response==0.2.0 \
+        pycryptodome==3.9.7 \
+        Pillow==7.0.0 \
+    ; \
     # Installing Seafdav dependencies
-    pip3 install --no-cache-dir \
+    pip3 install --no-cache-dir --no-dependencies \
         markupsafe==2.0.1 \
-        defusedxml~=0.5 \
         Jinja2~=2.10 \
-        jsmin~=2.2 \
-        python-pam~=1.8 \
-        PyYAML~=5.1 \
-        six~=1.12 \
-        lxml==4.4.1 \
         sqlalchemy==1.3.7
 
 COPY container_scripts/setup_script.py /seafile
