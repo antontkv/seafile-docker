@@ -31,8 +31,6 @@ RUN chmod +x /tini
 # Get Seafile files
 RUN mkdir -p /seafile/data && mkdir -p /seafile/server
 COPY --from=download /seafile-server /seafile/server/seafile-server
-COPY container_scripts/setup_script.py /seafile
-COPY container_scripts/backup /usr/sbin
 
 # Clear requirements.txt by resolving package versions
 RUN set -eux; \
@@ -58,6 +56,10 @@ RUN set -eux; \
         lxml==4.4.1 \
         sqlalchemy==1.3.7
 
+COPY container_scripts/setup_script.py /seafile
+COPY container_scripts/docker_entrypoint.sh /seafile
+COPY container_scripts/backup /usr/sbin
+
 ENV PYTHONPATH=/seafile/server/seafile-server/seahub/thirdpart:/seafile/server/seafile-server/seafile/lib64/python3.6/site-packages
 
 RUN chown -R 33:33 /seafile
@@ -66,4 +68,4 @@ WORKDIR /seafile
 EXPOSE 8000 8082 8080
 VOLUME /seafile/data
 ENTRYPOINT ["/tini", "-g", "--"]
-CMD ["python3", "-u", "/seafile/setup_script.py"]
+CMD ["bash", "-c", "/seafile/docker_entrypoint.sh"]
