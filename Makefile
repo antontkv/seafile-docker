@@ -62,6 +62,10 @@ down: ## Stop the container
 down.clean: down ## Stop the container and remove data volume
 	@docker volume rm seafile
 
+.PHONY: logs
+logs: ## Show container logs
+	@docker compose logs
+
 .PHONY: status
 status: ## Show container and volume status
 	@scripts/status
