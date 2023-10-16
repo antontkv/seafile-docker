@@ -60,7 +60,7 @@ down: ## Stop the container
 
 .PHONY: down.clean
 down.clean: down ## Stop the container and remove data volume
-	@docker volume rm seafile
+	@docker compose down -v
 
 .PHONY: logs
 logs: ## Show container logs
