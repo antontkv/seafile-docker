@@ -9,7 +9,7 @@ class SeafileContainerSetup:
     def __init__(self) -> None:
         self._docker_client = docker.from_env()
         self._container_args = dict(
-            image="ghcr.io/antontkv/seafile:7.1.4",
+            image="ghcr.io/antontkv/seafile:7.1.5",
             name="test-seafile",
             detach=True,
             volumes={"test-seafile": {"bind": "/seafile/data", "mode": "rw"}},

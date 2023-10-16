@@ -7,7 +7,7 @@ volumes:
 
 services:
   seafile:
-    image: ghcr.io/antontkv/seafile:7.1.4
+    image: ghcr.io/antontkv/seafile:7.1.5
     container_name: seafile
     environment:
       TZ:

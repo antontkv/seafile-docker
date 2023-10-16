@@ -36,14 +36,14 @@ RUN set -eux; \
         captcha==0.3 \
         django-simple-captcha==0.5.12 \
         django-ranged-response==0.2.0 \
-        pycryptodome==3.9.7 \
-        Pillow==7.1.2 \
+        pycryptodome==3.9.8 \
+        Pillow==7.2.0 \
     ; \
     # Installing Seafdav dependencies
     pip3 install --no-cache-dir --no-dependencies \
         markupsafe==2.0.1 \
         Jinja2~=2.10 \
-        sqlalchemy==1.3.17
+        sqlalchemy==1.3.19
 
 COPY container_scripts/setup_script.py /seafile
 COPY container_scripts/docker_entrypoint.sh /seafile
