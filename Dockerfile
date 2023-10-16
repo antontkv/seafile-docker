@@ -6,8 +6,6 @@ RUN tar -zxvf seafile-server_${SEAFILE_VERSION}_x86-64.tar.gz && \
     mv seafile-server-${SEAFILE_VERSION} seafile-server
 
 FROM ubuntu:focal as runtime
-ARG SEAFILE_VERSION
-ENV SEAFILE_VERSION=${SEAFILE_VERSION}
 ENV LANG C.UTF-8
 ENV LC_ALL C.UTF-8
 ENV DEBIAN_FRONTEND=noninteractive
@@ -52,6 +50,9 @@ COPY container_scripts/docker_entrypoint.sh /seafile
 COPY container_scripts/backup /usr/sbin
 
 ENV PYTHONPATH=/seafile/server/seafile-server/seahub/thirdpart:/seafile/server/seafile-server/seafile/lib64/python3.6/site-packages
+
+ARG SEAFILE_VERSION
+ENV SEAFILE_VERSION=${SEAFILE_VERSION}
 
 RUN chown -R 33:33 /seafile
 USER 33
