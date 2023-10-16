@@ -40,7 +40,7 @@ lint: ## Launch black and ruff
 
 .PHONY: build
 build: ## Build docker container
-	docker build --progress=plain --tag seafile:${SEAFILE_VERSION} --build-arg SEAFILE_VERSION=${SEAFILE_VERSION} .
+	docker build --progress=plain --tag antontkv/seafile:${SEAFILE_VERSION} --build-arg SEAFILE_VERSION=${SEAFILE_VERSION} .
 
 .PHONY: test
 test: ## Run tests
