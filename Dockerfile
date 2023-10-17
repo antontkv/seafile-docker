@@ -34,16 +34,16 @@ RUN set -eux; \
     # Installing Seahub dependencies
     pip3 install --no-cache-dir --no-dependencies \
         captcha==0.3 \
-        django-simple-captcha==0.5.12 \
+        django-simple-captcha==0.5.17 \
         django-ranged-response==0.2.0 \
-        pycryptodome==3.9.8 \
-        Pillow==7.2.0 \
+        pycryptodome==3.9.9 \
+        Pillow==8.1.0 \
     ; \
     # Installing Seafdav dependencies
     pip3 install --no-cache-dir --no-dependencies \
         markupsafe==2.0.1 \
         Jinja2~=2.10 \
-        sqlalchemy==1.3.19
+        sqlalchemy==1.4.3
 
 COPY container_scripts/setup_script.py /seafile
 COPY container_scripts/docker_entrypoint.sh /seafile
