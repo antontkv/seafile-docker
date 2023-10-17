@@ -49,6 +49,11 @@ def write_version_file():
         f.write(os.getenv("SEAFILE_VERSION"))
 
 
+def read_version_file() -> str:
+    with open(SF_VER, "r") as f:
+        return f.read()
+
+
 def replace_in_file(filename: str, re_to_find: str, replace_with_this: str):
     with open(filename, "r") as f:
         file_content = f.read()
@@ -69,6 +74,28 @@ def port_validation(port: str) -> int:
     if 1 > port > 65536:
         raise ValueError(f"Port {port} in not in range of valid ports 1-65536")
     return port
+
+
+def do_major_update(current_ver: str, old_ver: str) -> None:
+    if current_ver == old_ver:
+        return None
+
+    update_7_1__8_0 = os.path.join(SERVER_PATH, "upgrade/upgrade_7.1_8.0.sh")
+    update_map = {
+        ("8.0.2",): {
+            ("7.1.3", "7.1.4", "7.1.5"): (update_7_1__8_0,),
+        }
+    }
+
+    for new_versions, old_versions in update_map.items():
+        if current_ver in new_versions:
+            for versions, update_scripts in old_versions.items():
+                if old_ver in versions:
+                    for script in update_scripts:
+                        replace_in_file(script, r"read dummy", "")
+                        subprocess.run([script], check=True)
+                        write_version_file()
+                        return None
 
 
 def main():
@@ -153,6 +180,8 @@ def main():
 
     replace_in_file(CCNET_CONFIG, r"^SERVICE_URL = .*$", f"SERVICE_URL = {service_url}")
     replace_in_file(SEAHUB_CONFIG, r"^FILE_SERVER_ROOT = .*$", f"FILE_SERVER_ROOT = '{file_server_root}'")
+
+    do_major_update(os.getenv("SEAFILE_VERSION"), read_version_file())
 
     # Running update scripts if container was recreated and there are existing data.
     if not os.path.exists(SEAFILE_LATEST):
