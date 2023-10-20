@@ -36,20 +36,20 @@ RUN set -eux; \
         captcha==0.3 \
         django-simple-captcha==0.5.17 \
         django-ranged-response==0.2.0 \
-        pycryptodome==3.10.4 \
+        pycryptodome==3.12.0 \
         Pillow==8.4.0 \
     ; \
     # Installing Seafdav dependencies
     pip3 install --no-cache-dir --no-dependencies \
         markupsafe==2.0.1 \
         Jinja2~=2.10 \
-        sqlalchemy==1.4.27
+        sqlalchemy==1.4.28
 
 COPY container_scripts/setup_script.py /seafile
 COPY container_scripts/docker_entrypoint.sh /seafile
 COPY container_scripts/backup /usr/sbin
 
-ENV PYTHONPATH=/seafile/server/seafile-server/seahub/thirdpart:/seafile/server/seafile-server/seafile/lib64/python3.6/site-packages
+ENV PYTHONPATH=/seafile/server/seafile-server/seahub/thirdpart:/seafile/server/seafile-server/seafile/lib/python3/site-packages
 
 ARG SEAFILE_VERSION
 ENV SEAFILE_VERSION=${SEAFILE_VERSION}
