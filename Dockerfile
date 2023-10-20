@@ -36,8 +36,8 @@ RUN set -eux; \
         captcha==0.3 \
         django-simple-captcha==0.5.17 \
         django-ranged-response==0.2.0 \
-        pycryptodome==3.9.9 \
-        Pillow==8.1.0 \
+        pycryptodome==3.10.1 \
+        Pillow==8.1.2 \
     ; \
     # Installing Seafdav dependencies
     pip3 install --no-cache-dir --no-dependencies \

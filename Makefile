@@ -1,4 +1,4 @@
-SEAFILE_VERSION = 8.0.3
+SEAFILE_VERSION = 8.0.4
 
 .PHONY: help
 help: ## Show help
