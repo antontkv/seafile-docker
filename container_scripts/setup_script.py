@@ -82,7 +82,7 @@ def do_major_update(current_ver: str, old_ver: str) -> None:
 
     update_7_1__8_0 = os.path.join(SERVER_PATH, "upgrade/upgrade_7.1_8.0.sh")
     update_map = {
-        ("8.0.2", "8.0.3", "8.0.4", "8.0.5", "8.0.6"): {
+        ("8.0.2", "8.0.3", "8.0.4", "8.0.5", "8.0.6", "8.0.7"): {
             ("7.1.3", "7.1.4", "7.1.5"): (update_7_1__8_0,),
         }
     }
