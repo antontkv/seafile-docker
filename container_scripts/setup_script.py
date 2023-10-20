@@ -81,10 +81,15 @@ def do_major_update(current_ver: str, old_ver: str) -> None:
         return None
 
     update_7_1__8_0 = os.path.join(SERVER_PATH, "upgrade/upgrade_7.1_8.0.sh")
+    update_8_0__9_0 = os.path.join(SERVER_PATH, "upgrade/upgrade_8.0_9.0.sh")
     update_map = {
+        ("9.0.2",): {
+            ("8.0.2", "8.0.3", "8.0.4", "8.0.5", "8.0.6", "8.0.7", "8.0.8"): (update_8_0__9_0,),
+            ("7.1.3", "7.1.4", "7.1.5"): (update_7_1__8_0, update_8_0__9_0),
+        },
         ("8.0.2", "8.0.3", "8.0.4", "8.0.5", "8.0.6", "8.0.7", "8.0.8"): {
             ("7.1.3", "7.1.4", "7.1.5"): (update_7_1__8_0,),
-        }
+        },
     }
 
     for new_versions, old_versions in update_map.items():
@@ -93,9 +98,11 @@ def do_major_update(current_ver: str, old_ver: str) -> None:
                 if old_ver in versions:
                     for script in update_scripts:
                         replace_in_file(script, r"read dummy", "")
+                        if script == update_8_0__9_0:
+                            replace_in_file(script, r"update_seahub_settings;", "")
                         subprocess.run([script], check=True)
                         write_version_file()
-                        return None
+                    return None
 
 
 def main():
@@ -153,6 +160,8 @@ def main():
     write_to_seahub_config = "\n"
     if "TIME_ZONE" not in seahub_config_content:
         write_to_seahub_config += f"TIME_ZONE = '{check_env('TZ', 'Etc/UTC')}'\n"
+    if "SERVICE_URL" not in seahub_config_content:
+        write_to_seahub_config += "SERVICE_URL = ''\n"
     if "FILE_SERVER_ROOT" not in seahub_config_content:
         write_to_seahub_config += "FILE_SERVER_ROOT = ''\n"
 
@@ -178,7 +187,7 @@ def main():
     else:
         file_server_root += "/seafhttp"
 
-    replace_in_file(CCNET_CONFIG, r"^SERVICE_URL = .*$", f"SERVICE_URL = {service_url}")
+    replace_in_file(SEAHUB_CONFIG, r"^SERVICE_URL = .*$", f"SERVICE_URL = '{service_url}'")
     replace_in_file(SEAHUB_CONFIG, r"^FILE_SERVER_ROOT = .*$", f"FILE_SERVER_ROOT = '{file_server_root}'")
 
     do_major_update(os.getenv("SEAFILE_VERSION"), read_version_file())
