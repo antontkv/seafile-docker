@@ -51,7 +51,7 @@ RUN set -eux; \
     pip3 install --no-cache-dir --no-dependencies \
         markupsafe==2.0.1 \
         Jinja2~=2.10 \
-        sqlalchemy==1.4.40 \
+        sqlalchemy==1.4.41 \
         lxml==4.9.1
 
 ENV PYTHONPATH=/seafile/server/seafile-server/seahub/thirdpart:/seafile/server/seafile-server/seafile/lib/python3/site-packages
