@@ -44,14 +44,15 @@ RUN set -eux; \
         captcha==0.4 \
         django-simple-captcha==0.5.17 \
         django-ranged-response==0.2.0 \
-        pycryptodome==3.14.1 \
-        Pillow==9.1.1 \
+        pycryptodome==3.15.0 \
+        Pillow==9.2.0 \
     ; \
     # Installing Seafdav dependencies
     pip3 install --no-cache-dir --no-dependencies \
         markupsafe==2.0.1 \
         Jinja2~=2.10 \
-        sqlalchemy==1.4.37
+        sqlalchemy==1.4.40 \
+        lxml==4.9.1
 
 ENV PYTHONPATH=/seafile/server/seafile-server/seahub/thirdpart:/seafile/server/seafile-server/seafile/lib/python3/site-packages
 
