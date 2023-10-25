@@ -13,7 +13,7 @@ COPY container_scripts/setup_script.py /seafile
 COPY container_scripts/docker_entrypoint.sh /seafile
 
 
-FROM ubuntu:focal as runtime
+FROM ubuntu:jammy as runtime
 ENV LANG C.UTF-8
 ENV LC_ALL C.UTF-8
 ENV DEBIAN_FRONTEND=noninteractive
@@ -34,25 +34,36 @@ RUN set -eux; \
 ADD https://github.com/krallin/tini/releases/download/v0.19.0/tini /tini
 RUN chmod +x /tini
 
-# Get Seafile files
-COPY --from=download --chown=33:33 /seafile /seafile
-COPY container_scripts/backup /usr/sbin
-
 RUN set -eux; \
     # Installing Seahub dependencies
     pip3 install --no-cache-dir --no-dependencies \
+        # cffi
+        pycparser==2.21 \
+        cffi==1.15.1 \
+        # djangosaml2
+        cryptography==40.0.2 \
+        pyopenssl==23.1.1 \
+        xmlschema==2.2.3 \
+        pysaml2==7.4.1 \
+        djangosaml2==1.5.6 \
+        elementpath==4.1.1 \
+        # other
         captcha==0.4 \
         django-simple-captcha==0.5.17 \
         django-ranged-response==0.2.0 \
-        pycryptodome==3.16.0 \
-        Pillow==9.3.0 \
+        pycryptodome==3.17 \
+        Pillow==9.5.0 \
     ; \
     # Installing Seafdav dependencies
     pip3 install --no-cache-dir --no-dependencies \
         markupsafe==2.0.1 \
         Jinja2~=2.10 \
-        sqlalchemy==1.4.44 \
-        lxml==4.9.1
+        sqlalchemy==1.4.47 \
+        lxml==4.9.2
+
+# Get Seafile files
+COPY --from=download --chown=33:33 /seafile /seafile
+COPY container_scripts/backup /usr/sbin
 
 ENV PYTHONPATH=/seafile/server/seafile-server/seahub/thirdpart:/seafile/server/seafile-server/seafile/lib/python3/site-packages
 

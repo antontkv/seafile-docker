@@ -1,3 +1,4 @@
+import configparser
 import json
 import os
 import re
@@ -11,11 +12,14 @@ SEAFILE_LATEST = os.path.join(SERVER_ROOT_PATH, "seafile-server-latest")
 SEAFILE_INSTALL_SCRIPT = os.path.join(SERVER_PATH, "setup-seafile.sh")
 SEAFILE_SH = os.path.join(SERVER_PATH, "seafile.sh")
 SEAHUB_SH = os.path.join(SERVER_PATH, "seahub.sh")
+SECRET_KEY_GENERATOR = os.path.join(SERVER_PATH, "seahub/tools/secret_key_generator.py")
+WEBDAV_CLI = os.path.join(SERVER_PATH, "seahub/thirdpart/wsgidav/server/server_cli.py")
 PWD_FILE = os.path.join(SERVER_ROOT_PATH, "conf/admin.txt")
 GUNICORN_CONFIG = os.path.join(SERVER_ROOT_PATH, "conf/gunicorn.conf.py")
 CCNET_CONFIG = os.path.join(SERVER_ROOT_PATH, "conf/ccnet.conf")
 SEAHUB_CONFIG = os.path.join(SERVER_ROOT_PATH, "conf/seahub_settings.py")
 WEBDAV_CONFIG = os.path.join(SERVER_ROOT_PATH, "conf/seafdav.conf")
+SEAFILE_CONFIG = os.path.join(SERVER_ROOT_PATH, "conf/seafile.conf")
 AVATARS_DIR = os.path.join(SERVER_PATH, "seahub/media/avatars")
 SF_VER = os.path.join(DATA_PATH, "seafile_version.txt")
 
@@ -82,7 +86,13 @@ def do_major_update(current_ver: str, old_ver: str) -> None:
 
     update_7_1__8_0 = os.path.join(SERVER_PATH, "upgrade/upgrade_7.1_8.0.sh")
     update_8_0__9_0 = os.path.join(SERVER_PATH, "upgrade/upgrade_8.0_9.0.sh")
+    update_9_0__10_0 = os.path.join(SERVER_PATH, "upgrade/upgrade_9.0_10.0.sh")
     update_map = {
+        ("10.0.1",): {
+            ("9.0.2", "9.0.3", "9.0.4", "9.0.5", "9.0.6", "9.0.7", "9.0.8", "9.0.9", "9.0.10"): (update_9_0__10_0,),
+            ("8.0.2", "8.0.3", "8.0.4", "8.0.5", "8.0.6", "8.0.7", "8.0.8"): (update_8_0__9_0, update_9_0__10_0),
+            ("7.1.3", "7.1.4", "7.1.5"): (update_7_1__8_0, update_8_0__9_0, update_9_0__10_0),
+        },
         ("9.0.2", "9.0.3", "9.0.4", "9.0.5", "9.0.6", "9.0.7", "9.0.8", "9.0.9", "9.0.10"): {
             ("8.0.2", "8.0.3", "8.0.4", "8.0.5", "8.0.6", "8.0.7", "8.0.8"): (update_8_0__9_0,),
             ("7.1.3", "7.1.4", "7.1.5"): (update_7_1__8_0, update_8_0__9_0),
@@ -153,6 +163,33 @@ def main():
             f.write(WEBDAV_ENABLE_STR)
         else:
             f.write(WEBDAV_DISABLE_STR)
+
+    # Configure notification server
+    # Since notification server does not work with SQLite
+    # https://forum.seafile.com/t/notificaton-server-does-not-start/17879
+    # This section is unless and is put under if False to never execute.
+    # Since it works and I tested it, I will leave it.
+    # And Seafile after version 11 will drop support for SQLite, so maybe it will come in handy then.
+    if False:
+        seafile_config = configparser.ConfigParser(interpolation=None)
+        seafile_config.read(SEAFILE_CONFIG)
+        enable_notification_server = check_env("ENABLE_NOTIFICATION_SERVER", "false").lower() == "true"
+        if enable_notification_server:
+            seafile_config.setdefault("notification", dict())
+            seafile_config["notification"]["enabled"] = "true"
+            seafile_config["notification"]["host"] = "0.0.0.0"  # noqa
+            seafile_config["notification"]["port"] = "8083"
+            seafile_config["notification"]["log_level"] = "info"
+            if "jwt_private_key" not in seafile_config["notification"]:
+                jwt_private_key = subprocess.run(
+                    ["python3", SECRET_KEY_GENERATOR], check=True, capture_output=True, text=True
+                ).stdout.strip(" \t\n\r")
+                seafile_config["notification"]["jwt_private_key"] = jwt_private_key
+        else:
+            if "notification" in seafile_config:
+                del seafile_config["notification"]
+        with open(SEAFILE_CONFIG, "w") as f:
+            seafile_config.write(f)
 
     # Configure seahub_settings.py
     with open(SEAHUB_CONFIG, "r") as f:
