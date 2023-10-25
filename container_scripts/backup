@@ -2,7 +2,8 @@
 
 function start() {
     /seafile/server/seafile-server/seafile.sh stop
-    sleep 5
+    sleep 10
+    echo "Running seaf-gc"
     /seafile/server/seafile-server/seaf-gc.sh
 }
 
